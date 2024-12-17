@@ -144,3 +144,89 @@ project/
 ├── requirements.txt      # Python dependencies
 ├── data/                 # Directory for uploaded PDFs (optional)
 └── tests/                # Unit and integration tests
+
+
+
+#FULL RAG USING LAMGHCHAIN
+# import os
+# import json
+# from langchain_community.vectorstores import FAISS
+# from langchain.embeddings import HuggingFaceEmbeddings
+# from langchain.schema import Document
+# import numpy as np
+
+# # Paths for FAISS index and metadata
+# VECTOR_STORE_PATH = "vector_store.index"
+# METADATA_STORE_PATH = "metadata.json"
+
+# # Initialize embedding model
+# embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+
+# # Load or create FAISS vector store
+# def load_or_create_faiss():
+#     if os.path.exists(VECTOR_STORE_PATH) and os.path.exists(METADATA_STORE_PATH):
+#         with open(METADATA_STORE_PATH, "r", encoding="utf-8") as f:
+#             metadata = json.load(f)
+#         db = FAISS.load_local(
+#             VECTOR_STORE_PATH, 
+#             embeddings=embedding_model, 
+#             allow_dangerous_deserialization=True  # Ensure you trust the source
+#         )
+#     else:
+#         # Add a default document to initialize FAISS
+#         default_docs = [Document(page_content="This is a placeholder document.")]
+#         db = FAISS.from_documents(default_docs, embedding_model)
+#         metadata = [{"content": doc.page_content} for doc in default_docs]
+#     return db, metadata
+
+# db, metadata = load_or_create_faiss()
+
+# # Save FAISS vector store and metadata
+# def save_faiss_and_metadata():
+#     db.save_local(VECTOR_STORE_PATH)
+#     with open(METADATA_STORE_PATH, "w", encoding="utf-8") as f:
+#         json.dump(metadata, f, indent=4)
+
+# # Add documents to FAISS
+# def add_documents_to_faiss(docs):
+#     db.add_documents(docs)
+#     metadata.extend([{"content": doc.page_content, **doc.metadata} for doc in docs])
+#     save_faiss_and_metadata()
+# if _name_ == "_main_":
+#     # File paths for processing
+#     files_to_process = ["Processed_ASPICE_BP_Dynamic_Alignment.json", "automotive_chatbot_data.json"]
+#     # process_files_backend(files_to_process)
+
+#     # Test FAISS query
+#     test_query = "BP ID: SWE.1.BP1?"
+#     results = query_faiss(test_query)
+#     print("Query Results:")
+#     for doc in results:
+#         print(doc.page_content)
+
+ # Load FAISS index and metadata
+def load_faiss_and_metadata():
+    if os.path.exists(VECTOR_STORE_PATH):
+        faiss_index = faiss.read_index(VECTOR_STORE_PATH)
+    else:
+        faiss_index = faiss.IndexFlatL2(dimension) index, metadata = load_faiss_and_metadata()
+
+# Save FAISS index and metadata
+def save_faiss_and_metadata():
+    faiss.write_index(index, VECTOR_STORE_PATH) embeddings = embedding_model.embed_documents(valid_entries)
+
+    # Add embeddings and metadata to FAISS
+    for idx, content in enumerate(valid_entries):
+        index.add(np.array([embeddings[idx]], dtype="float32"))
+        metadata.append({
+            "content": content,
+            "type": "json",
+            "source": file_path
+        })
+
+    save_faiss_and_metadata()
+for open ai embeddings change the prompt
+    retriever = db.as_retriever()
+    retriever.search_kwargs.update({"k": top_k})
+    docs = retriever.get_relevant_documents(query)
+    return docs
